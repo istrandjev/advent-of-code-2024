@@ -8,9 +8,6 @@
 using namespace std;
 typedef long long ll;
 
-const std::string PROGRAM_NAME = "ivo";
-
-
 pair<int, int> parse_rule(const string& s) {
     pair<int, int> result;
     sscanf(s.c_str(), "%d|%d", &result.first, &result.second);
