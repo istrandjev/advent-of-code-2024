@@ -63,10 +63,8 @@ ll solve_games(const vector<Game>& games) {
 }
 
 int main() {
-    freopen("advent-of-code-2024/advent.in", "r", stdin);
     string s;
     vector<Game> games;
-
     
     while (true) {
         if (!getline(cin, s)) {
