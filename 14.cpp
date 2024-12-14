@@ -59,7 +59,69 @@ ll solve_part1(const vector<robot>& robots, int n, int m, int seconds) {
     return res;
 }
 
+int moves[4][2] = { { -1, 0 }, { 0, 1 }, { 1, 0 }, { 0, -1 } };
 void print_map(const vector<robot>& robots, int n, int m, int steps) {
+    set<pair<int, int> > points;
+
+    
+    for (auto r : robots) {
+        auto pos = get_position(r, n, m, steps);
+        points.insert(pos);
+    }
+
+    vector<pair<int, int> > selected;
+    set<pair<int, int> > visited;
+
+    for (auto p : points) {
+        if (visited.count(p)) {
+            continue;
+        }
+        queue<pair<int, int> > q;
+        q.push(p);
+        vector<pair<int, int> > current;
+        current.push_back({p.second, p.first});
+        while (!q.empty()) {
+            pair<int, int> cur = q.front();
+            q.pop();
+            for (int l = 0; l < 4; ++l) {
+                int tx = cur.first + moves[l][0];
+                int ty = cur.second + moves[l][1];
+                if (tx < 0 || tx >= n || ty < 0 || ty >= m) {
+                    continue;
+                }
+                if (points.count({tx, ty}) == 0 || visited.count({tx, ty})) {
+                    continue;
+                }
+                q.push({tx, ty});
+                visited.insert({tx, ty});
+                current.push_back({ty, tx});
+            }
+        }
+        if (current.size() > 10) {
+            for (auto p : current) {
+                selected.push_back(p);
+            }
+        }
+    }
+
+    int minx = n + 1, maxx = 0, miny = m + 1, maxy = 0;
+    for (auto p : selected) {
+        minx = min(minx, p.first);
+        maxx = max(maxx, p.first);
+        miny = min(miny, p.second);
+        maxy = max(maxy, p.second);
+    }
+    vector<string> a(maxx - minx + 1, string(maxy - miny + 1, ' '));
+    for (auto p : selected) {
+        a[p.first - minx][p.second - miny] = '*';
+    }
+    cout << endl;
+    for (auto string_row: a) {
+        cout << string_row << endl;
+    }
+}
+
+void print_map_old(const vector<robot>& robots, int n, int m, int steps) {
     vector<set<int> > per_row(m);
     for (auto r : robots) {
         auto pos = get_position(r, n, m, steps);
