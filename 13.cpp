@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <regex>
+#include <sstream>
 
 using namespace std;
 typedef long long ll;
@@ -15,18 +15,25 @@ struct Game {
     pair<ll, ll> prize;
 };
 
+string leave_only_digits(const string& s) {
+    string result;
+    for (auto c : s) {
+        if (!isdigit(c)) {
+            result.push_back(' ');
+        } else {
+            result.push_back(c);
+        }
+    }
+    return result;
+}
+
 Game parse_game(const string& s) {
-    regex e("Button .: X\\+([0-9]+), Y\\+([0-9]+)");
-    smatch m; 
-    regex_search(s, m, e);
-    Machine a{atoll(m[1].str().c_str()), atoll(m[2].str().c_str())};
-    string t = m.suffix().str();
-    regex_search(t, m, e);
-    Machine b{atoll(m[1].str().c_str()), atoll(m[2].str().c_str())};
-    regex e2("Prize: X=([0-9]+), Y=([0-9]+)");
-    t = m.suffix().str();
-    regex_search(t, m, e2);
-    return Game{a, b, {atoll(m[1].str().c_str()), atoll(m[2].str().c_str())}};
+    Game result;
+    istringstream iss(leave_only_digits(s));
+    iss >> result.a.dx >> result.a.dy;
+    iss >> result.b.dx >> result.b.dy;
+    iss >> result.prize.first >> result.prize.second;
+    return result;
 }
 
 ll solve_game(const Game& game) {
@@ -67,14 +74,12 @@ int main() {
     vector<Game> games;
     
     while (true) {
-        if (!getline(cin, s)) {
-            break;
+        string current;
+        for (int i = 0; i < 3; ++i) {
+            getline(cin, s);
+            current += "\n" + s;
         }
-        string current = s;
-        getline(cin, s);
-        current += "\n" + s;
-        getline(cin, s);
-        current += "\n" + s;
+        
         games.push_back(parse_game(current));
         if (!getline(cin, s)) {
             break;
@@ -89,3 +94,4 @@ int main() {
     cout << "Part 2: " << solve_games(games) << endl;
     return 0;
 }
+
