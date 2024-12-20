@@ -39,13 +39,14 @@ vector<vector<int> > get_dist(const vector<string>& a, const pair<int, int>& sta
     return dist;
 }
 
-ll solve(const vector<string>& a, const pair<int, int>& start, const pair<int, int>& end, int cheat_limit) {
+ll combs[60][60] = {0};
+ll solve(const vector<string>& a, const pair<int, int>& start, const pair<int, int>& end, int cheat_limit, bool different_cheats) {
     int n = (int)a.size();
     int m = (int)a[0].size();
     auto dist = get_dist(a, start, end);
     auto rdist = get_dist(a, end, start);
     int original = dist[end.first][end.second];
-    int answer = 0;
+    ll answer = 0;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
             if (a[i][j] == '#') {
@@ -64,7 +65,11 @@ ll solve(const vector<string>& a, const pair<int, int>& start, const pair<int, i
                     int temp = dist[i][j] + rdist[tx][ty] + abs(dx) + abs(dy) - 1;
                     int saved = original - temp;
                     if (saved >= 100) {
-                        answer++;
+                        if (!different_cheats) {
+                            answer++;
+                        } else {
+                            answer += combs[abs(dx) + abs(dy)][abs(dx)];
+                        }
                     }
                 }
             }
@@ -80,6 +85,13 @@ int main() {
         a.push_back(s);
     }
     pair<int, int> start, end;
+    combs[0][0] = 1;
+    for (int n = 1; n < 60; ++n) {
+        combs[n][0] = combs[n][n] = 1;
+        for (int k = 1; k < n; ++k) {
+            combs[n][k] = combs[n - 1][k - 1] + combs[n - 1][k];
+        }
+    }
     for (int i = 0; i < (int)a.size(); ++i) {
         for (int j = 0; j < (int)a[i].size(); ++j) {
             if (a[i][j] == 'S') {
@@ -92,7 +104,8 @@ int main() {
             }
         }
     }
-    cout << "Part 1: " << solve(a, start, end, 2) << endl;
-    cout << "Part 2: " << solve(a, start, end, 20) << endl;
+    cout << "Part 1: " << solve(a, start, end, 2, false) << endl;
+    cout << "Part 2: " << solve(a, start, end, 20, false) << endl;
+    cout << "Part 3: " << solve(a, start, end, 20, true) << endl;
     return 0;
 }
