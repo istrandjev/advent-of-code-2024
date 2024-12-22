@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 typedef long long ll;
@@ -30,33 +31,24 @@ ll solve_part1(const vector<ll>& secrets) {
     return result;
 }
 
-typedef vector<int> helper_type;
+typedef unordered_map<ll, ll> helper_type;
 
-ll get_for_sequence(int sequence_code, const vector<helper_type>& helper) {
-    ll answer = 0;
-    for (int i = 0; i < (int)helper.size(); ++i) {
-        if (helper[i][sequence_code] != -1) {
-            answer += helper[i][sequence_code];
-        }
-    }
-    return answer;
-}
 helper_type get_prices(const vector<int>& changes, const vector<int>& prices) {
     int code = 0;
     for (int i = 0; i < 3; ++i) {
         code = code * 21 + changes[i] + 10;
     }
     helper_type result;
-    result.resize(21 * 21 * 21 * 21, -1);
     for (int i = 3; i < (int)changes.size(); ++i) {
         code = code % (21 * 21 * 21);
         code = code * 21 + changes[i] + 10;
-        if (result[code] == -1) {
+        if (result.count(code) == 0) {
             result[code] = prices[i];
         }
     }
     return result;
 }
+
 ll solve_part2(const vector<ll>& secrets) {
     vector<vector<int> > changes(secrets.size());
     vector<vector<int> > prices(secrets.size());
@@ -72,13 +64,19 @@ ll solve_part2(const vector<ll>& secrets) {
         }
     }
     vector<helper_type> helper(secrets.size());
+    helper_type result;
+
     for (int si = 0; si < (int)secrets.size(); ++si) {
-        helper[si] = get_prices(changes[si], prices[si]);
+        auto current = get_prices(changes[si], prices[si]);
+        for (auto it : current) {
+            result[it.first] += it.second;
+        }
     }
     ll answer = 0;
-    for (int sequence_code = 0; sequence_code < 21 * 21 * 21 * 21; ++sequence_code) {
-        answer = max(answer, get_for_sequence(sequence_code, helper));
+    for (auto it : result) {
+        answer = max(answer, it.second);
     }
+    
     return answer;
 }
 
