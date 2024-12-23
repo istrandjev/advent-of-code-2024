@@ -1,26 +1,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <queue>
-#include <algorithm>
-#include <iomanip>
 #include <map>
 #include <set>
-#include <math.h>
-#include <stack>
-#include <deque>
-#include <numeric>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-#include <bitset>
-#include <functional>
-#include <unordered_set>
+#include <algorithm>
 #include <unordered_map>
-#include <regex>
 
-#define all(v) v.begin(),v.end()
+#define all(x) x.begin(), x.end()
 using namespace std;
 typedef long long ll;
 vector<string> split(const string& s, char delim=' ') {
@@ -190,8 +176,6 @@ string solve_part2(const vector<pair<string, string> >& string_edges) {
 }
 
 int main() {
-    freopen("advent-of-code-2024/advent.in", "r", stdin);
-    
     vector<pair<string, string> > connections;
     string s;
     while (getline(cin, s)) {
